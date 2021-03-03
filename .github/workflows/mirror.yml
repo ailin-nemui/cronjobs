@@ -19,6 +19,9 @@ jobs:
         git clone --mirror http://git.epicsol.org/epic5.git/
         cd epic5.git
         git push --mirror git@github.com:ailin-nemui/epic5.git
+    - name: uninstall ssh key
+      run: |
+        rm -fr ~/.ssh
   stamp:
     runs-on: ubuntu-latest
     steps:
@@ -26,6 +29,8 @@ jobs:
     - name: commit changes
       run: |
         date +'%G%V' > .wk
+        git config user.email "cron@ailin-nemui.github.io"
+        git config user.name "GitHub Cronjobs"
         git add .wk
         git commit -m "Run from $(date)" || :
         git push
