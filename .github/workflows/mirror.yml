@@ -1,0 +1,30 @@
+on:
+  workflow_dispatch:
+  check_run:
+    types: [rerequested]
+  schedule:
+    - cron: '17 4 * * *'
+
+jobs:
+  epic5:
+    runs-on: ubuntu-latest
+    steps:
+    - name: install ssh key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_KEY }}
+    - name: mirror epic5 repo
+      run: |
+        git clone --mirror http://git.epicsol.org/epic5.git/
+        cd epic5.git
+        git push --mirror git@github.com:ailin-nemui/epic5.git
+  stamp:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@main
+    - name: commit changes
+      run: |
+        date +'%G%V' > .wk
+        git add .wk
+        git commit -m "Run from $(date)" || :
+        git push
